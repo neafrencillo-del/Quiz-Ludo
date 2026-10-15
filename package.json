@@ -1,7 +1,7 @@
 {
-  "name": "your-game-api",
+  "name": "Quiz-Ludo-api",
   "version": "1.0.0",
-  "description": "CHANGE_ME - one sentence about your game (CS 313 Software Engineering 1)",
+  "description": "Quiz Ludo is an interactive web-based multiplayer educational game combining trivia speed races with classic board-game mechanics.",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -19,7 +19,7 @@
   "engines": {
     "node": ">=22"
   },
-  "author": "CHANGE_ME - your full name",
+  "author": "Nea Frencillo",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^18.0.7",
