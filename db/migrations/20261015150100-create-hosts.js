@@ -4,33 +4,31 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('hosts', {
-      id: {
+      host_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
-      },
-      username: {
-        type: Sequelize.STRING(50),
         allowNull: false,
-        unique: true
       },
-      password_hash: {
-        type: Sequelize.TEXT,
-        allowNull: false
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'user_id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: Sequelize.fn('NOW'),
       },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false
-      }
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('hosts');
-  }
+  },
 };

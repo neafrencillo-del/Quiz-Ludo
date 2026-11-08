@@ -1,69 +1,80 @@
 'use strict';
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface) {
-    const db = queryInterface.sequelize;
-
-    // 1. Find the parents that an earlier seeder created (using exact table/column names)
-    const [[host]] = await db.query("SELECT user_id FROM users WHERE school_id = '2099-0001';");
-    const [[set]] = await db.query("SELECT set_id FROM question_sets WHERE title = 'Library Orientation Basics';");
-
-    // 2. Insert the finished game session
-    await queryInterface.bulkInsert('game_sessions', [{
-      set_id: set.set_id,
-      host_id: host.user_id,
-      join_pin: '418263',
-      status: 'CLOSED',
-      started_at: new Date('2026-10-09T01:00:00Z'),
-      ended_at: new Date('2026-10-09T01:12:00Z'),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }]);
-
-    // 3. Insert players / game results for this session (at least 3 completed, 1 DNF / left early, 1 tie)
-    const [[player1]] = await db.query("SELECT user_id FROM users WHERE school_id = '2099-0002';");
-    const [[player2]] = await db.query("SELECT user_id FROM users WHERE school_id = '2099-0003';");
-    const [[player3]] = await db.query("SELECT user_id FROM users WHERE school_id = '2099-0004';");
-    const [[player4]] = await db.query("SELECT user_id FROM users WHERE school_id = '2099-0005';");
-
-    await queryInterface.bulkInsert('players', [
+  async up(queryInterface, Sequelize) {
+    // 1. Insert Demo Users
+    await queryInterface.bulkInsert('users', [
       {
-        session_id: 1, // Or dynamic lookup if needed, matching your session
-        user_id: player1.user_id,
-        score: 100,
-        status: 'COMPLETED', // Winner 1 (Tie)
-        createdAt: new Date(),
-        updatedAt: new Date()
+        school_id: 'HOST-001',
+        full_name: 'Primary Host User',
+        email: 'host1@quizludo.edu',
+        role: 'HOST',
+        created_at: new Date(),
       },
       {
-        session_id: 1,
-        user_id: player2.user_id,
-        score: 100, // Awkward case: Tie score
-        status: 'COMPLETED', // Winner 2 (Tie)
-        createdAt: new Date(),
-        updatedAt: new Date()
+        school_id: 'HOST-002',
+        full_name: 'Second Host User',
+        email: 'host2@quizludo.edu',
+        role: 'HOST',
+        created_at: new Date(),
       },
-      {
-        session_id: 1,
-        user_id: player3.user_id,
-        score: 70,
-        status: 'COMPLETED', // Completed player 3
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        session_id: 1,
-        user_id: player4.user_id,
-        score: 20,
-        status: 'LEFT_EARLY', // Unfinished player requirement
-        createdAt: new Date(),
-        updatedAt: new Date()
+    ], {});
+
+    // Fetch inserted user IDs
+    const users = await queryInterface.sequelize.query(
+      `SELECT user_id FROM users WHERE school_id IN ('HOST-001', 'HOST-002') ORDER BY user_id ASC;`,
+      { type: Sequelize.QueryTypes.SELECT }
+    );
+
+    if (users.length >= 2) {
+      // 2. Insert Demo Hosts
+      await queryInterface.bulkInsert('hosts', [
+        { user_id: users[0].user_id, created_at: new Date() },
+        { user_id: users[1].user_id, created_at: new Date() },
+      ], {});
+
+      // 3. Insert Demo Question Set
+      await queryInterface.bulkInsert('question_sets', [
+        {
+          host_id: users[0].user_id,
+          title: 'CS Fundamentals Quiz',
+          subject: 'Computer Science',
+          is_public: true,
+          created_at: new Date(),
+        },
+      ], {});
+
+      // Fetch inserted set ID
+      const questionSets = await queryInterface.sequelize.query(
+        `SELECT set_id FROM question_sets LIMIT 1;`,
+        { type: Sequelize.QueryTypes.SELECT }
+      );
+
+      if (questionSets.length > 0) {
+        const set_id = questionSets[0].set_id;
+
+        // 4. Insert Demo Questions
+        await queryInterface.bulkInsert('questions', [
+          {
+            set_id: set_id,
+            question_text: 'What does CPU stand for?',
+            option_a: 'Central Processing Unit',
+            option_b: 'Computer Personal Unit',
+            option_c: 'Central Processor Utility',
+            option_d: 'Control Processing Unit',
+            correct_answer: 'A',
+            created_at: new Date(),
+          },
+        ], {});
       }
-    ]);
+    }
   },
 
-  async down(queryInterface) {
-    await queryInterface.bulkDelete('players', null, {});
-    await queryInterface.bulkDelete('game_sessions', { join_pin: '418263' }, {});
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('questions', null, {});
+    await queryInterface.bulkDelete('question_sets', null, {});
+    await queryInterface.bulkDelete('hosts', null, {});
+    await queryInterface.bulkDelete('users', null, {});
+  },
 };

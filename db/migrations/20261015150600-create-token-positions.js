@@ -4,42 +4,41 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('token_positions', {
-      id: {
+      position_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
       },
       player_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'session_players',
-          key: 'id'
+          key: 'player_id',
         },
-        onDelete: 'CASCADE'
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
-      token_num: {
+      token_index: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        defaultValue: 0,
       },
       position: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 0
+        defaultValue: 0,
       },
-      createdAt: {
+      created_at: {
         type: Sequelize.DATE,
-        allowNull: false
+        allowNull: false,
+        defaultValue: Sequelize.fn('NOW'),
       },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false
-      }
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('token_positions');
-  }
+  },
 };

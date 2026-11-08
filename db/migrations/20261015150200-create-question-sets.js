@@ -4,42 +4,44 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('question_sets', {
-      id: {
+      set_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
       },
       host_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'hosts',
-          key: 'id'
+          model: 'users',
+          key: 'user_id',
         },
-        onDelete: 'CASCADE'
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       title: {
-        type: Sequelize.STRING(100),
-        allowNull: false
+        type: Sequelize.STRING(150),
+        allowNull: false,
+      },
+      subject: {
+        type: Sequelize.STRING(60),
+        allowNull: true,
+      },
+      is_public: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.fn('now')
+        defaultValue: Sequelize.fn('NOW'),
       },
-      createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false
-      }
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('question_sets');
-  }
+  },
 };

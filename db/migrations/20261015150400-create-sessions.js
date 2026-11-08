@@ -4,63 +4,51 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('sessions', {
-      id: {
+      session_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        allowNull: false
+        allowNull: false,
       },
       host_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'hosts',
-          key: 'id'
+          key: 'host_id',
         },
-        onDelete: 'CASCADE'
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       set_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
           model: 'question_sets',
-          key: 'id'
+          key: 'set_id',
         },
-        onDelete: 'CASCADE'
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
-      code: {
-        type: Sequelize.STRING(6),
+      session_code: {
+        type: Sequelize.STRING(10),
         allowNull: false,
-        unique: true
+        unique: true,
       },
       status: {
         type: Sequelize.STRING(20),
         allowNull: false,
-        defaultValue: 'waiting'
-      },
-      current_question: {
-        type: Sequelize.INTEGER
-      },
-      round_winner_id: {
-        type: Sequelize.INTEGER
+        defaultValue: 'WAITING',
       },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.fn('now')
+        defaultValue: Sequelize.fn('NOW'),
       },
-      createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false
-      },
-      updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false
-      }
     });
   },
 
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('sessions');
-  }
+  },
 };
