@@ -10,37 +10,28 @@ module.exports = {
         autoIncrement: true,
         allowNull: false,
       },
-      host_id: {
+      // If sessions has a foreign key to users or hosts, make sure it references 'user_id', NOT 'username'
+      user_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true, // or false depending on your schema
         references: {
-          model: 'hosts',
-          key: 'host_id',
+          model: 'users',
+          key: 'user_id', // <--- Must be 'user_id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-      },
-      set_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'question_sets',
-          key: 'set_id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-      },
-      session_code: {
-        type: Sequelize.STRING(10),
-        allowNull: false,
-        unique: true,
+        onDelete: 'SET NULL',
       },
       status: {
-        type: Sequelize.STRING(20),
+        type: Sequelize.STRING(50),
         allowNull: false,
-        defaultValue: 'WAITING',
+        defaultValue: 'active',
       },
       created_at: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn('NOW'),
+      },
+      updated_at: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.fn('NOW'),

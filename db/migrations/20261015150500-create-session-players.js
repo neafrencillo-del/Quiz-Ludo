@@ -31,14 +31,21 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       color: {
-        type: Sequelize.STRING(20),
-        allowNull: true,
+        type: Sequelize.STRING(50),
+        allowNull: false,
       },
       joined_at: {
         type: Sequelize.DATE,
         allowNull: false,
         defaultValue: Sequelize.fn('NOW'),
       },
+    });
+
+    // Add composite unique constraint for session_id and user_id (One seat per account per game)
+    await queryInterface.addConstraint('session_players', {
+      fields: ['session_id', 'user_id'],
+      type: 'unique',
+      name: 'session_players_session_id_user_id_unique',
     });
   },
 
