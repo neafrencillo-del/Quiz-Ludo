@@ -60,11 +60,15 @@ Base URL: `http://localhost:3001/api/v1`
 
 ## What "completed" means in my game
 
-[One or two sentences: when does a player count as having completed a game? For example: "A player completed the game when they answered every question, even if some answers were wrong or timed out."]
+[A player is considered to have completed a game when they finish all rounds of the Quiz Ludo board match by reaching the final home tile or completing all assigned trivia questions, regardless of whether they won or lost the match.]
 
 ## Tables
 
-[List your tables, one line each, in the order of your migrations.]
+[- `Players` (Stores player registration, student ID, profile info, and match connection status)
+- `Rooms` (Manages active Ludo game lobbies, match states, and player capacity)
+- `Questions` (Stores quiz questions, categories, difficulty levels, and multiple-choice options)
+- `GameSessions` (Tracks individual player match sessions, current board positions, dice rolls, and scores)
+- `MatchResults` (Records final standings, completion timestamps, and scores submitted to the Hub)]
 
 ## Database scripts
 
